@@ -7,11 +7,11 @@ export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!session?.user) {
-      router.push("/login");
-    }
-  }, [session, router]);
+  // useEffect(() => {
+  //   if (!session?.user) {
+  //     router.push("/login");
+  //   }
+  // }, [session, router]);
 
   return (
     <div>
