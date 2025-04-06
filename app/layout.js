@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Provider from "./Provider";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -32,10 +33,13 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/images/logo.png" type="image/png" />
         <title>PinDrop</title>
       </head>
-      <body className={`${poppins.variable} antialiased`}>
+      <body
+        className={`${poppins.variable} antialiased flex flex-col min-h-screen`}
+      >
         <Provider>
           <Header />
-          {children}
+          <main className="flex-grow">{children}</main>
+          <Footer />
         </Provider>
       </body>
     </html>
