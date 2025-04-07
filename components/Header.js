@@ -48,19 +48,22 @@ function Header() {
             Home
           </Link>
           <Link
-            href="/about"
-            className="text-gray-700 font-medium hover:text-yellow-300 transition"
-          >
-            About
-          </Link>
-          <Link
-            href="/features"
+            href="/#features"
+            scroll={true}
             className="text-gray-700 font-medium hover:text-yellow-300 transition"
           >
             Features
           </Link>
           <Link
-            href="/contact"
+            href="/#about"
+            scroll={true}
+            className="text-gray-700 font-medium hover:text-yellow-300 transition"
+          >
+            About
+          </Link>
+          <Link
+            href="/#contact"
+            scroll={true}
             className="text-gray-700 font-medium hover:text-yellow-300 transition"
           >
             Contact Us
@@ -167,19 +170,22 @@ function Header() {
             Home
           </Link>
           <Link
-            href="/about"
-            className="block text-gray-700 font-medium hover:text-yellow-300 cursor-pointer transition"
-          >
-            About
-          </Link>
-          <Link
-            href="/features"
+            href="/#features"
+            scroll={true}
             className="block text-gray-700 font-medium hover:text-yellow-300 cursor-pointer transition"
           >
             Features
           </Link>
           <Link
-            href="/contact"
+            href="/#about"
+            scroll={true}
+            className="block text-gray-700 font-medium hover:text-yellow-300 cursor-pointer transition"
+          >
+            About
+          </Link>
+          <Link
+            href="/#contact"
+            scroll={true}
             className="block text-gray-700 font-medium hover:text-yellow-300 cursor-pointer transition"
           >
             Contact Us
