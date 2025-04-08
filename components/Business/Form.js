@@ -33,7 +33,7 @@ export default function BusinessForm() {
     e.preventDefault();
   
     try {
-      const res = await fetch("/api/business", {
+      const res = await fetch("/api/business/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

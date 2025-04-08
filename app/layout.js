@@ -4,6 +4,7 @@ import "./globals.css";
 import Provider from "./Provider";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { LoaderProvider } from "@/context/LoaderContext";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -37,9 +38,11 @@ export default function RootLayout({ children }) {
         className={`${poppins.variable} antialiased flex flex-col min-h-screen`}
       >
         <Provider>
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
+          <LoaderProvider>{" "}
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </LoaderProvider>{" "}
         </Provider>
       </body>
     </html>

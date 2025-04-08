@@ -12,12 +12,39 @@ function Header() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const router = useRouter();
 
+  // useEffect(() => {
+  //   console.log("session:", session);
+  //   if (session?.user) {
+  //     router.push("/business");
+  //   }
+  // }, [router, session]);
+
   useEffect(() => {
-    console.log("session:", session);
-    if (session?.user) {
+    if (session?.user && window.location.pathname === "/") {
       router.push("/business");
     }
   }, [router, session]);
+
+  // useEffect(() => {
+  //   const checkBusinessExists = async () => {
+  //     if (!session?.user?.email) return;
+
+  //     try {
+  //       const res = await fetch(`/api/business/check?email=${session.user.email}`);
+  //       const data = await res.json();
+
+  //       if (data.exists) {
+  //         router.push("/business/dashboard");
+  //       } else {
+  //         router.push("/business/register");
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to check business existence:", err);
+  //     }
+  //   };
+
+  //   checkBusinessExists();
+  // }, [router, session]);
 
   useEffect(() => {
     if (profileClick === true) {
@@ -84,7 +111,7 @@ function Header() {
               />
               {profileClick && (
                 <div className="absolute top-12 right-0 bg-white border shadow-lg rounded-md w-32 z-50">
-                  <Link href="/dashboard">
+                  <Link href="/business">
                     <button className="block w-full text-left px-4 py-2 text-sm cursor-pointer font-bold text-gray-700 hover:text-yellow-300">
                       Dashboard
                     </button>
@@ -92,7 +119,7 @@ function Header() {
                   <button
                     onClick={() => {
                       setProfileClick(false); // Optional: close dropdown on click
-                      signOut();
+                      signOut({ callbackUrl: '/' });
                     }}
                     className="block w-full text-left px-4 py-2 text-sm cursor-pointer font-bold text-gray-700 hover:text-yellow-300"
                   >
@@ -154,7 +181,7 @@ function Header() {
                   height={36}
                   className="rounded-full"
                 />
-                <Link href="/dashboard">
+                <Link href="/business">
                   <span className="text-gray-700 font-bold transition hover:text-pink-600">
                     {session.user.name}
                   </span>
@@ -194,7 +221,7 @@ function Header() {
           {session?.user ? (
             <div>
               <button
-                onClick={() => signOut()}
+                onClick={() => signOut({ callbackUrl: '/' })}
                 className="text-left font-medium cursor-pointer w-full text-red-500 hover:underline mt-2"
               >
                 Logout
