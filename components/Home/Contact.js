@@ -5,7 +5,7 @@ const Contact = () => {
   return (
     <section id="contact">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="md:flex gap-x-24 clear-left md:mb-16 mb-10">
+        <div className="md:flex gap-x-24 clear-left md:my-16 mb-10">
           <div className=" md:mb-0 mb-4">
             <h2 className="text-black font-manrope text-4xl font-semibold leading-10 mb-5 md:text-left text-center">
               Get In Touch
@@ -15,18 +15,18 @@ const Contact = () => {
               here to facilitate communication with you.
             </p>
             <div className="flex md:items-center md:justify-start justify-center">
-              <button className="w-36 h-12 rounded-full bg-yellow-300 transition-all duration-700 cursor-pointer hover:bg-yellow-500 hover:text-white shadow text-black text-center text-base font-semibold leading-6">
+              <button className="bg-yellow-300 hover:bg-yellow-500 hover:text-white text-black px-4 py-2 rounded-md font-bold cursor-pointer transition">
                 Contact Us
               </button>
             </div>
           </div>
-          <div className="border-l-2 md:border-indigo-600 border-white px-10 py-6">
+          <div className="border-l-2 md:border-yellow-300 border-white px-10 py-6">
             <div className="mb-8">
               <h6 className="text-gray-500 text-sm font-medium leading-5 pb-3 md:text-start text-center">
                 Email Address
               </h6>
               <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">
-                pagedone@gmail.com
+                pindrop@example.com
               </h3>
             </div>
             <div>
@@ -34,7 +34,7 @@ const Contact = () => {
                 Phone Number
               </h6>
               <h3 className="text-black text-xl font-semibold leading-8 md:text-start text-center">
-                470-601-1911
+                123-456-7890
               </h3>
             </div>
           </div>

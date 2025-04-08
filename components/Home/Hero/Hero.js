@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import StaticMap from "./StaticMap";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -9,7 +10,8 @@ export default function Hero() {
     <section className="relative w-full h-[calc(100vh-5rem)] overflow-hidden">
       {/* Map as background */}
       <div className="absolute inset-0 z-0">
-        <Map />
+        {/* <Map /> */}
+        <StaticMap />
       </div>
 
       {/* Overlay for darkening map*/}

@@ -6,7 +6,8 @@ export default function About() {
   return (
     <section
       id="about"
-      className="pb-15 relative bg-[url('/images/bg-pink2.jpg')] bg-cover bg-center bg-no-repeat"
+      // className="pb-15 relative bg-[url('/images/bg-pink2.jpg')] bg-cover bg-center bg-no-repeat"
+      className="pb-15 relative bg-rose-200 bg-cover bg-center bg-no-repeat"
     >
       {/* Heading */}
       <h2 className="text-4xl font-extrabold text-gray-800 text-center pt-10 pb-10">
