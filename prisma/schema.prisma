@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id          Int             @id @default(autoincrement())
+  email       String
+  name        String
+  category    String?
+  description String?
+  createdAt   DateTime        @default(now())
+  deliveryZones DeliveryZone[]
+}
+
+model DeliveryZone {
+  id         Int      @id @default(autoincrement())
+  cityName   String
+  lat        Float?
+  lng        Float?
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId Int
+}

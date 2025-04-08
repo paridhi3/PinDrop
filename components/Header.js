@@ -15,7 +15,7 @@ function Header() {
   useEffect(() => {
     console.log("session:", session);
     if (session?.user) {
-      router.push("/");
+      router.push("/business");
     }
   }, [router, session]);
 
