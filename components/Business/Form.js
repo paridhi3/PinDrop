@@ -1,16 +1,72 @@
+//components/Business/Form.js
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import AsyncSelect from "react-select/async";
+import Select from "react-select";
+import worldCities from "@/data/worldcities.json"; // adjust path as needed
 
-const cityOptions = [
-  { label: "New York", lat: 40.7128, lng: -74.006 },
-  { label: "London", lat: 51.5074, lng: -0.1278 },
-  { label: "Tokyo", lat: 35.6895, lng: 139.6917 },
-  { label: "Delhi", lat: 28.6139, lng: 77.209 },
-];
+// ✅ Prepare options for react-select
+const cityOptions = worldCities.map((city) => ({
+  label: `${city.city}, ${city.country}`,
+  value: city.city,
+  lat: city.lat,
+  lng: city.lng,
+}));
 
 const categories = ["Electronics", "Food", "Fashion", "Books"];
+
+const categoryOptions = categories.map((cat) => ({
+  value: cat,
+  label: cat,
+}));
+
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "transparent", 
+    border: "1px solid black", 
+    boxShadow: state.isFocused ? "0 0 0 2px #d81b60" : "none",
+    padding: "2px 6px",
+    borderRadius: "0.375rem",
+    color: "#111827", // text-gray-900
+    "&:hover": {
+      borderColor: "#d81b60", // pink-600
+    },
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#374151",
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: "#f9fafb", // gray-50 (or use 'transparent' or dark)
+    zIndex: 10,
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused ? "#F3CFC6" : "transparent", // light pink on hover
+    color: "#111827", // gray-900
+    cursor: "pointer",
+  }),
+  multiValue: (provided) => ({
+    ...provided,
+    backgroundColor: "#e5e7eb", // gray-200
+  }),
+  multiValueLabel: (provided) => ({
+    ...provided,
+    color: "#374151", // gray-700
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    color: "#6b7280", // gray-500
+    ":hover": {
+      backgroundColor: "#ef4444", // red-500
+      color: "white",
+    },
+  }),
+};
 
 export default function BusinessForm() {
   const { data: session } = useSession();
@@ -21,17 +77,36 @@ export default function BusinessForm() {
   const [description, setDescription] = useState("");
   const [selectedCities, setSelectedCities] = useState([]);
 
-  const handleCityChange = (e) => {
-    const value = e.target.value;
-    if (!selectedCities.find((c) => c.label === value)) {
-      const selected = cityOptions.find((c) => c.label === value);
-      if (selected) setSelectedCities([...selectedCities, selected]);
+  const loadCityOptions = (inputValue, callback) => {
+    if (!inputValue || inputValue.length < 2) {
+      return callback([]);
     }
+
+    const filtered = worldCities
+      .filter((city) =>
+        `${city.city}, ${city.country}`
+          .toLowerCase()
+          .includes(inputValue.toLowerCase())
+      )
+      .slice(0, 20) // 👈 Only take top 50 results
+
+      .map((city) => ({
+        label: `${city.city}, ${city.country}`,
+        value: city.city,
+        lat: city.lat,
+        lng: city.lng,
+      }));
+
+    callback(filtered);
+  };
+
+  const handleCityChange = (selected) => {
+    setSelectedCities(selected || []);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const res = await fetch("/api/business/register", {
         method: "POST",
@@ -48,14 +123,16 @@ export default function BusinessForm() {
           })),
         }),
       });
-  
+
       if (!res.ok) {
         const errorText = await res.text();
-        throw new Error(`Request failed: ${res.status} ${res.statusText} - ${errorText}`);
+        throw new Error(
+          `Request failed: ${res.status} ${res.statusText} - ${errorText}`
+        );
       }
-  
+
       const data = await res.json();
-  
+
       if (data.success) {
         alert("Business Created!");
         setName("");
@@ -63,22 +140,22 @@ export default function BusinessForm() {
         setDescription("");
         setSelectedCities([]);
 
-        router.push('/');
+        router.push("/business");
       }
     } catch (err) {
       console.error("Error submitting form:", err.message);
       alert("There was a problem creating the business.");
     }
-  };  
+  };
 
   return (
     <div
       className="h-fit bg-cover bg-center flex items-center justify-center"
       style={{
-        backgroundImage: "url('images/bg-pink2.jpg')",
+        backgroundImage: "url('images/register-bg.jpg')",
       }}
     >
-      <div className="w-full my-16 max-w-xl bg-white/35 backdrop-blur-md p-8 rounded-lg shadow-lg">
+      <div className="w-full my-16 max-w-xl bg-white/35 backdrop-blur-2xl p-8 rounded-lg shadow-lg">
         <h3 className="text-3xl text-center text-gray-800 mb-6 font-extrabold">
           Register Your Business
         </h3>
@@ -93,7 +170,7 @@ export default function BusinessForm() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded placeholder-gray-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
               placeholder="Business Name"
             />
           </div>
@@ -115,19 +192,12 @@ export default function BusinessForm() {
             <label className="block text-base font-semibold text-gray-700 mb-1">
               Category
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            <Select
+              options={categoryOptions}
+              onChange={(selected) => setCategory(selected.value)}
+              placeholder="Select Category"
+              styles={customSelectStyles}
+            />
           </div>
 
           <div>
@@ -138,7 +208,7 @@ export default function BusinessForm() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border placeholder-gray-700 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
               placeholder="Brief description..."
               rows={1}
             />
@@ -148,10 +218,10 @@ export default function BusinessForm() {
             <label className="block text-base font-semibold text-gray-700 mb-1">
               Delivery Cities
             </label>
-            <select
+            {/* <select
               onChange={handleCityChange}
               required
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
             >
               <option value="">Add Delivery City</option>
               {cityOptions.map((city) => (
@@ -159,9 +229,19 @@ export default function BusinessForm() {
                   {city.label}
                 </option>
               ))}
-            </select>
+            </select> */}
+            <AsyncSelect
+              cacheOptions
+              loadOptions={loadCityOptions}
+              isMulti
+              defaultOptions={false}
+              onChange={handleCityChange}
+              value={selectedCities}
+              styles={customSelectStyles}
+              placeholder="Type city name to select city"
+            />
 
-            <div className="flex flex-wrap gap-2 mt-2">
+            {/* <div className="flex flex-wrap gap-2 mt-2">
               {selectedCities.map((city) => (
                 <span
                   key={city.label}
@@ -181,12 +261,12 @@ export default function BusinessForm() {
                   </button>
                 </span>
               ))}
-            </div>
+            </div> */}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer font-semibold py-2 px-4 rounded transition"
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white cursor-pointer font-semibold py-2 px-4 rounded transition"
           >
             Submit
           </button>

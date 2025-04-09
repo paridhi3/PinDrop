@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import BusinessForm from '@/components/Business/Form';
 import BusinessDashboard from '@/components/Business/Dashboard';
-import { useLoader } from '@/context/LoaderContext'; // 👈 import the loader hook
+import { useLoader } from '@/context/LoaderContext';
 import Loader from '@/components/Loader';
 
 export default function Business() {
@@ -47,3 +47,5 @@ export default function Business() {
 
   return businessExists ? <BusinessDashboard /> : <BusinessForm />;
 }
+
+
