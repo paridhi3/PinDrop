@@ -1,5 +1,5 @@
+// app/business/page.js
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -7,12 +7,13 @@ import { useRouter } from 'next/navigation';
 import BusinessForm from '@/components/Business/Form';
 import BusinessDashboard from '@/components/Business/Dashboard';
 import { useLoader } from '@/context/LoaderContext'; // 👈 import the loader hook
+import Loader from '@/components/Loader';
 
 export default function Business() {
   const { data: session, status } = useSession();
   const [businessExists, setBusinessExists] = useState(null);
   const router = useRouter();
-  const { setLoading } = useLoader(); // 👈 get the loader controller
+  const { setLoading } = useLoader();
 
   useEffect(() => {
     const checkBusiness = async () => {
@@ -34,7 +35,10 @@ export default function Business() {
     checkBusiness();
   }, [session, status, setLoading]);
 
-  if (status === 'loading') return null; // loader handles the UI
+  if (status === 'loading' || businessExists === null) {
+    return <Loader />
+  }
+
 
   if (!session?.user) {
     router.push('/');

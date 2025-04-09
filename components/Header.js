@@ -1,3 +1,4 @@
+//components/Header.js
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -18,12 +19,6 @@ function Header() {
   //     router.push("/business");
   //   }
   // }, [router, session]);
-
-  useEffect(() => {
-    if (session?.user && window.location.pathname === "/") {
-      router.push("/business");
-    }
-  }, [router, session]);
 
   // useEffect(() => {
   //   const checkBusinessExists = async () => {
@@ -118,7 +113,7 @@ function Header() {
                   </Link>
                   <button
                     onClick={() => {
-                      setProfileClick(false); // Optional: close dropdown on click
+                      setProfileClick(false); // close dropdown on click
                       signOut({ callbackUrl: '/' });
                     }}
                     className="block w-full text-left px-4 py-2 text-sm cursor-pointer font-bold text-gray-700 hover:text-yellow-300"
@@ -253,7 +248,7 @@ function Header() {
             <button
               onClick={() => {
                 setShowLoginModal(false);
-                signIn("google");
+                signIn("google", { callbackUrl: "/business" });
               }}
               className="w-full py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md cursor-pointer transition"
             >
