@@ -1,4 +1,3 @@
-// app/business/page.js
 'use client';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -11,23 +10,23 @@ import Loader from '@/components/Loader';
 
 export default function Business() {
   const { data: session, status } = useSession();
-  const [businessExists, setBusinessExists] = useState(null);
+  const [business, setBusiness] = useState(null); // ✅ Store the full object
   const router = useRouter();
   const { setLoading } = useLoader();
 
   useEffect(() => {
     const checkBusiness = async () => {
       if (status === 'authenticated' && session?.user?.email) {
-        setLoading(true); // 👈 show loader
+        setLoading(true);
         try {
           const res = await fetch(`/api/business/check?email=${session.user.email}`);
           const data = await res.json();
-          setBusinessExists(data.exists);
+          setBusiness(data.business || null); // ✅ store business or null
         } catch (err) {
           console.error('Failed to check business:', err);
-          setBusinessExists(false); // fallback to form
+          setBusiness(null);
         } finally {
-          setLoading(false); // 👈 hide loader
+          setLoading(false);
         }
       }
     };
@@ -35,19 +34,16 @@ export default function Business() {
     checkBusiness();
   }, [session, status, setLoading]);
 
-  if (status === 'loading' || businessExists === null) {
-    return <Loader />
+  if (status === 'loading' || (status === 'authenticated' && business === null)) {
+    return <Loader />;
   }
-
 
   if (!session?.user) {
     router.push('/');
     return null;
   }
 
-  return businessExists
-  ? <BusinessDashboard />
-  : <BusinessForm onSuccess={() => setBusinessExists(true)} />;
+  return business
+    ? <BusinessDashboard business={business} /> // ✅ pass down the business object
+    : <BusinessForm onSuccess={setBusiness} />; // ✅ Form will provide new business
 }
-
-

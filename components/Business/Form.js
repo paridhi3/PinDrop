@@ -140,7 +140,7 @@ export default function BusinessForm({ onSuccess }) {
         setDescription("");
         setSelectedCities([]);
 
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess(data.business);
 
         // router.push("/business");
       }

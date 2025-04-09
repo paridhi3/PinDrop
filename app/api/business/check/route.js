@@ -1,4 +1,5 @@
 // app/api/business/check/route.js
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -15,7 +16,11 @@ export async function GET(req) {
       where: { email },
     });
 
-    return NextResponse.json({ exists: !!business });
+    if (!business) {
+      return NextResponse.json({ error: 'Business not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ business }); // ✅ Send full business object
   } catch (error) {
     console.error('Error checking business:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
