@@ -45,7 +45,9 @@ export default function Business() {
     return null;
   }
 
-  return businessExists ? <BusinessDashboard /> : <BusinessForm />;
+  return businessExists
+  ? <BusinessDashboard />
+  : <BusinessForm onSuccess={() => setBusinessExists(true)} />;
 }
 
 

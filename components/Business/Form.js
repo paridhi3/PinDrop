@@ -68,7 +68,7 @@ const customSelectStyles = {
   }),
 };
 
-export default function BusinessForm() {
+export default function BusinessForm({ onSuccess }) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -140,7 +140,9 @@ export default function BusinessForm() {
         setDescription("");
         setSelectedCities([]);
 
-        router.push("/business");
+        if (onSuccess) onSuccess();
+
+        // router.push("/business");
       }
     } catch (err) {
       console.error("Error submitting form:", err.message);
