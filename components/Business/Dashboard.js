@@ -1,11 +1,14 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useState, useRef } from "react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Select from "react-select";
+import AsyncSelect from "react-select/async";
+import worldCities from "@/data/worldcities.json";
 import {
   GoogleMap,
   Marker,
-  Circle,
+  InfoWindow,
   useLoadScript,
 } from "@react-google-maps/api";
 import Loader from "../Loader";
@@ -15,10 +18,40 @@ const mapContainerStyle = {
   height: "400px",
 };
 
+const mapOptions = {
+  styles: [
+    // Hide all labels
+    {
+      featureType: "all",
+      elementType: "labels",
+      stylers: [{ visibility: "off" }],
+    },
+    // Show country name
+    {
+      featureType: "administrative.country",
+      elementType: "labels.text",
+      stylers: [{ visibility: "on" }],
+    },
+    // Show city names
+    {
+      featureType: "administrative.locality",
+      elementType: "labels.text",
+      stylers: [{ visibility: "on" }],
+    },
+  ],
+};
+
 const defaultCenter = {
   lat: 20.5937,
   lng: 78.9629, // India center
 };
+
+const categories = ["Electronics", "Food", "Fashion", "Books"];
+
+const categoryOptions = categories.map((cat) => ({
+  value: cat,
+  label: cat,
+}));
 
 const BusinessDashboard = () => {
   const { data: session } = useSession();
@@ -26,14 +59,12 @@ const BusinessDashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [business, setBusiness] = useState(null);
+  const [initialForm, setInitialForm] = useState(null);
+  const [selectedCities, setSelectedCities] = useState([]);
   const [form, setForm] = useState({
     name: "",
     category: "",
     description: "",
-  });
-
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   });
 
   // Fetch business data
@@ -46,19 +77,32 @@ const BusinessDashboard = () => {
         const data = await res.json();
         console.log("(Dashboard.js) data.business: ", data.business);
         if (data.business) {
-          setBusiness(data.business);
-          setForm({
+          const defaultForm = {
             name: data.business.name,
             category: data.business.category,
             description: data.business.description,
-          });
+          };
+
+          const cityOptions = data.business.deliveryZones.map((zone) => ({
+            label: zone.cityName,
+            value: zone.cityName,
+          }));
+
+          setForm(defaultForm);
+          setInitialForm(defaultForm);
+          setSelectedCities(cityOptions);
+          setBusiness(data.business);
         } else {
-          setBusiness({ deliveryZones: [] }); // fallback to avoid crash
-          setForm({
+          const emptyForm = {
             name: "",
             category: "",
             description: "",
-          });
+          };
+
+          setForm(emptyForm);
+          setInitialForm(emptyForm);
+          setSelectedCities([]);
+          setBusiness({ deliveryZones: [] });
         }
       } catch (err) {
         console.error("Failed to fetch business info:", err);
@@ -70,26 +114,127 @@ const BusinessDashboard = () => {
     if (session?.user?.email) fetchBusiness();
   }, [session]);
 
+  const loadCityOptions = (inputValue, callback) => {
+    if (!inputValue || inputValue.length < 2) {
+      return callback([]);
+    }
+
+    const filtered = worldCities
+      .filter((city) =>
+        `${city.city}, ${city.country}`
+          .toLowerCase()
+          .includes(inputValue.toLowerCase())
+      )
+      .slice(0, 20)
+      .map((city) => ({
+        label: `${city.city}, ${city.country}`,
+        value: city.city,
+        lat: city.lat,
+        lng: city.lng,
+      }));
+
+    callback(filtered);
+  };
+
+  const handleCityChange = (cities) => {
+    setSelectedCities(cities || []);
+  };
+
+  const isDeliveryZoneChanged = () => {
+    if (!initialForm || !business?.deliveryZones) return false;
+
+    const initialCities = business.deliveryZones.map((z) => z.cityName).sort();
+    const currentCities = selectedCities.map((c) => c.value).sort();
+
+    return JSON.stringify(initialCities) !== JSON.stringify(currentCities);
+  };
+
+  const isFormChanged = () => {
+    return (
+      initialForm &&
+      (form.name !== initialForm.name ||
+        form.category !== initialForm.category ||
+        form.description !== initialForm.description ||
+        isDeliveryZoneChanged())
+    );
+  };
+
   // Handle update
   const handleUpdate = async () => {
     try {
+      const updatedDeliveryZones = selectedCities.map((city) => ({
+        cityName: city.value,
+        lat: city.lat,
+        lng: city.lng,
+      }));
+
       const res = await fetch("/api/business/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: session.user.email,
           ...form,
+          deliveryZones: updatedDeliveryZones,
         }),
       });
 
       if (res.ok) {
         alert("Business info updated");
+
+        const updatedBusiness = {
+          ...business,
+          name: form.name,
+          category: form.category,
+          description: form.description,
+          deliveryZones: updatedDeliveryZones,
+        };
+
+        setBusiness(updatedBusiness); // <-- triggers map rerender
+
+        // setTimeout(() => {
+        //   if (mapRef.current) {
+        //     const bounds = new window.google.maps.LatLngBounds();
+        //     updatedDeliveryZones.forEach((zone) => {
+        //       bounds.extend({ lat: zone.lat, lng: zone.lng });
+        //     });
+        //     mapRef.current.fitBounds(bounds);
+        //   }
+        // }, 300); // Wait for re-render
+
+        setInitialForm(form);
+        setMapBounds(null); // <-- triggers recalculation on next map load
       } else {
         throw new Error("Update failed");
       }
     } catch (err) {
       console.error(err);
       alert("Error updating business");
+    }
+  };
+
+  // Handle Map Load
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+  });
+  const mapRef = useRef(null);
+  const [mapBounds, setMapBounds] = useState(null);
+  const [activeZoneIndex, setActiveZoneIndex] = useState(null);
+
+  const handleMapLoad = (map) => {
+    mapRef.current = map;
+    const bounds = new window.google.maps.LatLngBounds();
+
+    business.deliveryZones.forEach((zone) => {
+      bounds.extend({ lat: zone.lat, lng: zone.lng });
+    });
+
+    setMapBounds(bounds);
+    map.fitBounds(bounds);
+  };
+
+  const resetView = () => {
+    if (mapRef.current && mapBounds) {
+      mapRef.current.fitBounds(mapBounds);
     }
   };
 
@@ -107,7 +252,7 @@ const BusinessDashboard = () => {
 
       if (res.ok) {
         alert("Business deleted");
-        router.push("/");
+        signOut({ callbackUrl: "/" });
       } else {
         throw new Error("Delete failed");
       }
@@ -132,22 +277,42 @@ const BusinessDashboard = () => {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           placeholder="Business Name"
         />
-        <input
-          type="text"
-          className="w-full px-4 py-2 border rounded"
-          value={form.category}
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
+        <Select
+          className="w-full"
+          value={categoryOptions.find(
+            (option) => option.value === form.category
+          )}
+          options={categoryOptions}
+          onChange={(selectedOption) =>
+            setForm({ ...form, category: selectedOption?.value || "" })
+          }
           placeholder="Category"
         />
+
         <textarea
           className="w-full px-4 py-2 border rounded"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           placeholder="Description"
         />
+
+        <AsyncSelect
+          cacheOptions
+          loadOptions={loadCityOptions}
+          isMulti
+          defaultOptions={false}
+          onChange={handleCityChange}
+          value={selectedCities}
+        />
+
         <button
-          className="px-4 py-2 bg-pink-600 text-white rounded"
+          className={`px-4 py-2 rounded text-white cursor-pointer ${
+            isFormChanged()
+              ? "bg-pink-600 hover:bg-pink-700"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
           onClick={handleUpdate}
+          disabled={!isFormChanged()}
         >
           Update Info
         </button>
@@ -158,24 +323,44 @@ const BusinessDashboard = () => {
         <h3 className="text-xl font-semibold mb-2">Delivery Zones</h3>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
-          center={business.deliveryZones[0] || defaultCenter}
-          zoom={5}
+          options={mapOptions}
+          onLoad={handleMapLoad}
         >
+          {/* <GoogleMap
+          key={business.deliveryZones.map((z) => z.cityName).join(",")} // unique key
+          mapContainerStyle={mapContainerStyle}
+          options={mapOptions}
+          onLoad={handleMapLoad}
+        > */}
           {business.deliveryZones.map((zone, index) => (
-            <Circle
-              key={index}
-              center={{ lat: zone.lat, lng: zone.lng }}
-              radius={10000} // 10km radius
-              options={{
-                fillColor: "#ec4899",
-                fillOpacity: 0.35,
-                strokeColor: "#be185d",
-                strokeOpacity: 0.8,
-                strokeWeight: 1,
-              }}
-            />
+            <div key={index}>
+              <Marker
+                key={index}
+                position={{
+                  lat: Number(zone.lat),
+                  lng: Number(zone.lng),
+                }}
+                onMouseOver={() => setActiveZoneIndex(index)}
+                onMouseOut={() => setActiveZoneIndex(null)}
+                onClick={() => setActiveZoneIndex(index)}
+                className="cursor-pointer"
+              ></Marker>
+
+              {activeZoneIndex === index && (
+                <InfoWindow position={{ lat: zone.lat, lng: zone.lng }}>
+                  <div className="text-sm font-bold">{zone.cityName}</div>
+                </InfoWindow>
+              )}
+            </div>
           ))}
         </GoogleMap>
+
+        <button
+          onClick={resetView}
+          className="mt-4 px-4 py-2 bg-pink-600 cursor-pointer text-white rounded hover:bg-pink-700"
+        >
+          Reset View
+        </button>
       </div>
 
       {/* Delete Button */}

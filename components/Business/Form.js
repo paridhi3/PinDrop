@@ -220,18 +220,6 @@ export default function BusinessForm({ onSuccess }) {
             <label className="block text-base font-semibold text-gray-700 mb-1">
               Delivery Cities
             </label>
-            {/* <select
-              onChange={handleCityChange}
-              required
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-600"
-            >
-              <option value="">Add Delivery City</option>
-              {cityOptions.map((city) => (
-                <option key={city.label} value={city.label}>
-                  {city.label}
-                </option>
-              ))}
-            </select> */}
             <AsyncSelect
               cacheOptions
               loadOptions={loadCityOptions}
@@ -242,28 +230,6 @@ export default function BusinessForm({ onSuccess }) {
               styles={customSelectStyles}
               placeholder="Type city name to select city"
             />
-
-            {/* <div className="flex flex-wrap gap-2 mt-2">
-              {selectedCities.map((city) => (
-                <span
-                  key={city.label}
-                  className="flex items-center bg-lime-200 text-sm font-medium px-3 py-1 rounded-full"
-                >
-                  {city.label}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setSelectedCities(
-                        selectedCities.filter((c) => c.label !== city.label)
-                      )
-                    }
-                    className="ml-2 cursor-pointer text-red-500 hover:text-red-700 font-bold"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div> */}
           </div>
 
           <button

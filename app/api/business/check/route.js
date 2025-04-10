@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(req) {
+  console.log('CHECK BUSINESS API HIT');
   try {
     const { searchParams } = new URL(req.url);
     const email = searchParams.get('email');
@@ -14,11 +15,10 @@ export async function GET(req) {
 
     const business = await prisma.business.findUnique({
       where: { email },
-    });
-
-    if (!business) {
-      return NextResponse.json({ error: 'Business not found' }, { status: 404 });
-    }
+      include: {
+        deliveryZones: true,
+      },
+    });   
 
     return NextResponse.json({ business }); // ✅ Send full business object
   } catch (error) {
