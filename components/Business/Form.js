@@ -5,14 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
-import worldCities from "@/data/worldcities.json"; // adjust path as needed
-
-const categories = ["Electronics", "Food", "Fashion", "Books"];
-
-const categoryOptions = categories.map((cat) => ({
-  value: cat,
-  label: cat,
-}));
+import { categoryOptions, loadCityOptions, handleCityChange } from "./utility";
 
 const customSelectStyles = {
   control: (provided, state) => ({
@@ -69,32 +62,6 @@ export default function BusinessForm({ onSuccess }) {
   const [description, setDescription] = useState("");
   const [selectedCities, setSelectedCities] = useState([]);
 
-  const loadCityOptions = (inputValue, callback) => {
-    if (!inputValue || inputValue.length < 2) {
-      return callback([]);
-    }
-
-    const filtered = worldCities
-      .filter((city) =>
-        `${city.city}, ${city.country}`
-          .toLowerCase()
-          .includes(inputValue.toLowerCase())
-      )
-      .slice(0, 20) // 👈 Only take top 50 results
-
-      .map((city) => ({
-        label: `${city.city}, ${city.country}`,
-        value: city.city,
-        lat: city.lat,
-        lng: city.lng,
-      }));
-
-    callback(filtered);
-  };
-
-  const handleCityChange = (selected) => {
-    setSelectedCities(selected || []);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -133,8 +100,6 @@ export default function BusinessForm({ onSuccess }) {
         setSelectedCities([]);
 
         if (onSuccess) onSuccess(data.business);
-
-        // router.push("/business");
       }
     } catch (err) {
       console.error("Error submitting form:", err.message);

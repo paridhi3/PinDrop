@@ -1,18 +1,9 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 import Select from "react-select";
 import AsyncSelect from "react-select/async";
-import worldCities from "@/data/worldcities.json";
-// import Loader from "@/components/Loader";
-
-const categories = ["Electronics", "Food", "Fashion", "Books"];
-
-const categoryOptions = categories.map((cat) => ({
-  value: cat,
-  label: cat,
-}));
+import { categoryOptions, loadCityOptions, handleCityChange } from "../utility";
 
 const UpdateForm = ({ business, setBusiness }) => {
   const { data: session } = useSession();
@@ -60,33 +51,6 @@ const UpdateForm = ({ business, setBusiness }) => {
       console.error("Failed to fetch business info:", err);
     }
   }, [business]); // Dependency array
-  
-
-  const loadCityOptions = (inputValue, callback) => {
-    if (!inputValue || inputValue.length < 2) {
-      return callback([]);
-    }
-
-    const filtered = worldCities
-      .filter((city) =>
-        `${city.city}, ${city.country}`
-          .toLowerCase()
-          .includes(inputValue.toLowerCase())
-      )
-      .slice(0, 20)
-      .map((city) => ({
-        label: `${city.city}, ${city.country}`,
-        value: city.city,
-        lat: city.lat,
-        lng: city.lng,
-      }));
-
-    callback(filtered);
-  };
-
-  const handleCityChange = (cities) => {
-    setSelectedCities(cities || []);
-  };
 
   const isDeliveryZoneChanged = () => {
     if (!initialForm || !business?.deliveryZones) return false;
@@ -141,7 +105,6 @@ const UpdateForm = ({ business, setBusiness }) => {
         setBusiness(updatedBusiness); // <-- triggers map rerender
 
         setInitialForm(form);
-        // setMapBounds(null); // <-- triggers recalculation on next map load
       } else {
         throw new Error("Update failed");
       }
