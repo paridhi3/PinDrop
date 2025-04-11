@@ -7,14 +7,6 @@ import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import worldCities from "@/data/worldcities.json"; // adjust path as needed
 
-// ✅ Prepare options for react-select
-const cityOptions = worldCities.map((city) => ({
-  label: `${city.city}, ${city.country}`,
-  value: city.city,
-  lat: city.lat,
-  lng: city.lng,
-}));
-
 const categories = ["Electronics", "Food", "Fashion", "Books"];
 
 const categoryOptions = categories.map((cat) => ({

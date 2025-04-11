@@ -11,7 +11,8 @@ import {
   InfoWindow,
   useLoadScript,
 } from "@react-google-maps/api";
-import Loader from "../Loader";
+import Loader from "../../Loader";
+import DeleteAccount from "./DeleteAccount";
 
 const mapContainerStyle = {
   width: "100%",
@@ -39,11 +40,6 @@ const mapOptions = {
       stylers: [{ visibility: "on" }],
     },
   ],
-};
-
-const defaultCenter = {
-  lat: 20.5937,
-  lng: 78.9629, // India center
 };
 
 const categories = ["Electronics", "Food", "Fashion", "Books"];
@@ -83,19 +79,14 @@ const BusinessDashboard = () => {
             description: data.business.description,
           };
 
-          // const cityOptions = data.business.deliveryZones.map((zone) => ({
-          //   label: zone.cityName,
-          //   value: zone.cityName,
-          // }));
           const cityOptions = data.business.deliveryZones.map((zone) => ({
-            id: zone.id,                      // 🟢 Include ID to track existing zones
+            id: zone.id,           
             label: zone.cityName,
             value: zone.cityName,
             lat: zone.lat,
             lng: zone.lng,
           }));
           
-
           setForm(defaultForm);
           setInitialForm(defaultForm);
           setSelectedCities(cityOptions);
@@ -170,18 +161,12 @@ const BusinessDashboard = () => {
   // Handle update
   const handleUpdate = async () => {
     try {
-      // const updatedDeliveryZones = selectedCities.map((city) => ({
-      //   cityName: city.value,
-      //   lat: city.lat,
-      //   lng: city.lng,
-      // }));
       const updatedDeliveryZones = selectedCities.map((city) => ({
         id: city.id,                     // 🟢 Include ID if it exists
         cityName: city.value,
         lat: city.lat,
         lng: city.lng,
       }));
-      
 
       const res = await fetch("/api/business/update", {
         method: "PUT",
@@ -205,16 +190,6 @@ const BusinessDashboard = () => {
         };
 
         setBusiness(updatedBusiness); // <-- triggers map rerender
-
-        // setTimeout(() => {
-        //   if (mapRef.current) {
-        //     const bounds = new window.google.maps.LatLngBounds();
-        //     updatedDeliveryZones.forEach((zone) => {
-        //       bounds.extend({ lat: zone.lat, lng: zone.lng });
-        //     });
-        //     mapRef.current.fitBounds(bounds);
-        //   }
-        // }, 300); // Wait for re-render
 
         setInitialForm(form);
         setMapBounds(null); // <-- triggers recalculation on next map load
@@ -250,30 +225,6 @@ const BusinessDashboard = () => {
   const resetView = () => {
     if (mapRef.current && mapBounds) {
       mapRef.current.fitBounds(mapBounds);
-    }
-  };
-
-  // Handle delete
-  const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete your business account?"))
-      return;
-
-    try {
-      const res = await fetch("/api/business/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: session.user.email }),
-      });
-
-      if (res.ok) {
-        alert("Business deleted");
-        signOut({ callbackUrl: "/" });
-      } else {
-        throw new Error("Delete failed");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting business");
     }
   };
 
@@ -341,12 +292,6 @@ const BusinessDashboard = () => {
           options={mapOptions}
           onLoad={handleMapLoad}
         >
-          {/* <GoogleMap
-          key={business.deliveryZones.map((z) => z.cityName).join(",")} // unique key
-          mapContainerStyle={mapContainerStyle}
-          options={mapOptions}
-          onLoad={handleMapLoad}
-        > */}
           {business.deliveryZones.map((zone, index) => (
             <div key={index}>
               <Marker
@@ -379,14 +324,7 @@ const BusinessDashboard = () => {
       </div>
 
       {/* Delete Button */}
-      <div>
-        <button
-          className="px-4 py-2 bg-red-600 text-white rounded"
-          onClick={handleDelete}
-        >
-          Delete Business Account
-        </button>
-      </div>
+      <DeleteAccount />
     </div>
   );
 };

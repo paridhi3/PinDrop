@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import BusinessForm from "@/components/Business/Form";
-import BusinessDashboard from "@/components/Business/Dashboard";
+import BusinessDashboard from "@/components/Business/Dashboard/Dashboard";
 import { useLoader } from "@/context/LoaderContext";
 import Loader from "@/components/Loader";
 
