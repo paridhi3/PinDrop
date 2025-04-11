@@ -18,26 +18,47 @@ export async function PUT(request) {
       return NextResponse.json({ error: "Business not found" }, { status: 404 });
     }
 
-    // Only update delivery zones if deliveryZones is explicitly present in the request
-    if (deliveryZones !== undefined) {
-      // First, delete all old zones for this business
-      await prisma.deliveryZone.deleteMany({
+    // update delivery zones
+    if (Array.isArray(deliveryZones)) {
+      const existingZones = await prisma.deliveryZone.findMany({
         where: { businessId: existingBusiness.id },
       });
-
-      if (deliveryZones.length > 0) {
-        const newZones = deliveryZones
-          .filter(zone => zone?.lat && zone?.lng && zone?.value)
-          .map(zone => ({
-            businessId: existingBusiness.id,
-            cityName: zone.value,
-            lat: parseFloat(zone.lat),
-            lng: parseFloat(zone.lng),
-          }));
-
-        await prisma.deliveryZone.createMany({ data: newZones });
+    
+      const incomingZoneIds = deliveryZones.map(z => z.id).filter(Boolean); // for existing zones
+      const zonesToDelete = existingZones.filter(z => !incomingZoneIds.includes(z.id));
+    
+      // Delete removed zones
+      await prisma.deliveryZone.deleteMany({
+        where: {
+          id: { in: zonesToDelete.map(z => z.id) },
+        },
+      });
+    
+      // Upsert or create zones
+      for (const zone of deliveryZones) {
+        if (zone.id) {
+          // Existing zone — update it
+          await prisma.deliveryZone.update({
+            where: { id: zone.id },
+            data: {
+              cityName: zone.cityName,
+              lat: parseFloat(zone.lat),
+              lng: parseFloat(zone.lng),
+            },
+          });
+        } else {
+          // New zone — create it
+          await prisma.deliveryZone.create({
+            data: {
+              businessId: existingBusiness.id,
+              cityName: zone.cityName,
+              lat: parseFloat(zone.lat),
+              lng: parseFloat(zone.lng),
+            },
+          });
+        }
       }
-    }
+    }    
 
     // Update business info
     const updatedBusiness = await prisma.business.update({

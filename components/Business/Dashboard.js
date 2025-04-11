@@ -83,10 +83,18 @@ const BusinessDashboard = () => {
             description: data.business.description,
           };
 
+          // const cityOptions = data.business.deliveryZones.map((zone) => ({
+          //   label: zone.cityName,
+          //   value: zone.cityName,
+          // }));
           const cityOptions = data.business.deliveryZones.map((zone) => ({
+            id: zone.id,                      // 🟢 Include ID to track existing zones
             label: zone.cityName,
             value: zone.cityName,
+            lat: zone.lat,
+            lng: zone.lng,
           }));
+          
 
           setForm(defaultForm);
           setInitialForm(defaultForm);
@@ -162,11 +170,18 @@ const BusinessDashboard = () => {
   // Handle update
   const handleUpdate = async () => {
     try {
+      // const updatedDeliveryZones = selectedCities.map((city) => ({
+      //   cityName: city.value,
+      //   lat: city.lat,
+      //   lng: city.lng,
+      // }));
       const updatedDeliveryZones = selectedCities.map((city) => ({
+        id: city.id,                     // 🟢 Include ID if it exists
         cityName: city.value,
         lat: city.lat,
         lng: city.lng,
       }));
+      
 
       const res = await fetch("/api/business/update", {
         method: "PUT",
