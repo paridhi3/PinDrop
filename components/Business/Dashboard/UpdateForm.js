@@ -24,7 +24,7 @@ const UpdateForm = ({ business, setBusiness }) => {
           category: business.category,
           description: business.description,
         };
-  
+
         const cityOptions = business.deliveryZones.map((zone) => ({
           id: zone.id,
           label: zone.cityName,
@@ -32,7 +32,7 @@ const UpdateForm = ({ business, setBusiness }) => {
           lat: zone.lat,
           lng: zone.lng,
         }));
-  
+
         setForm(defaultForm);
         setInitialForm(defaultForm);
         setSelectedCities(cityOptions);
@@ -42,7 +42,7 @@ const UpdateForm = ({ business, setBusiness }) => {
           category: "",
           description: "",
         };
-  
+
         setForm(emptyForm);
         setInitialForm(emptyForm);
         setSelectedCities([]);
@@ -114,11 +114,12 @@ const UpdateForm = ({ business, setBusiness }) => {
     }
   };
 
-//   if (loading || !isLoaded) return <Loader />;
-
   return (
     // update form
     <div className="space-y-4 mb-8">
+      <label className="block text-base font-semibold text-gray-700 mb-1">
+        Business Name
+      </label>
       <input
         type="text"
         className="w-full px-4 py-2 border rounded"
@@ -126,6 +127,10 @@ const UpdateForm = ({ business, setBusiness }) => {
         onChange={(e) => setForm({ ...form, name: e.target.value })}
         placeholder="Business Name"
       />
+
+      <label className="block text-base font-semibold text-gray-700 mb-1">
+        Category
+      </label>
       <Select
         className="w-full"
         value={categoryOptions.find((option) => option.value === form.category)}
@@ -136,6 +141,9 @@ const UpdateForm = ({ business, setBusiness }) => {
         placeholder="Category"
       />
 
+      <label className="block text-base font-semibold text-gray-700 mb-1">
+        Description
+      </label>
       <textarea
         className="w-full px-4 py-2 border rounded"
         value={form.description}
@@ -143,6 +151,9 @@ const UpdateForm = ({ business, setBusiness }) => {
         placeholder="Description"
       />
 
+      <label className="block text-base font-semibold text-gray-700 mb-1">
+        Delivery Cities
+      </label>
       <AsyncSelect
         cacheOptions
         loadOptions={loadCityOptions}

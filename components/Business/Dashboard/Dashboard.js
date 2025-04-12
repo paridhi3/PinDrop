@@ -32,12 +32,17 @@ const BusinessDashboard = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="max-w-4xl mx-auto my-10 bg-white/70 backdrop-blur-md p-6 rounded-lg shadow-lg">
+    <div className="w-full mx-auto px-4 sm:px-8 md:px-12 lg:px-20 my-10 bg-white/70 backdrop-blur-md py-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4">Business Dashboard</h2>
-
-      <UpdateForm business={business} setBusiness={setBusiness} />
-
-      <Map business={business} />
+      
+      <div className="flex flex-col lg:flex-row gap-14">
+        <div className="w-full lg:w-[35%]">
+          <UpdateForm business={business} setBusiness={setBusiness} />
+        </div>
+        <div className="w-full lg:w-[65%]">
+          <Map business={business} />
+        </div>
+      </div>
 
       <DeleteAccount />
     </div>

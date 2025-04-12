@@ -11,7 +11,7 @@ import Loader from "@/components/Loader";
 
 const mapContainerStyle = {
   width: "100%",
-  height: "400px",
+  height: "500px",
 };
 
 const mapOptions = {
@@ -69,6 +69,7 @@ const Map = ({ business }) => {
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold mb-2">Delivery Zones</h3>
+
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         options={mapOptions}

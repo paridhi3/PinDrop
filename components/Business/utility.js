@@ -1,6 +1,36 @@
 import worldCities from "@/data/worldcities.json";
 
-const categories = ["Electronics", "Food", "Fashion", "Books"];
+export const categories = [
+  "Electronics",
+  "Food",
+  "Fashion",
+  "Books",
+  "Home & Furniture",
+  "Health & Wellness",
+  "Beauty & Personal Care",
+  "Grocery",
+  "Automotive",
+  "Jewelry",
+  "Toys & Games",
+  "Sports & Outdoors",
+  "Pet Supplies",
+  "Office Supplies",
+  "Art & Craft",
+  "Mobile & Accessories",
+  "Travel & Tourism",
+  "Real Estate",
+  "Education",
+  "Entertainment",
+  "Fitness",
+  "Pharmacy",
+  "Hardware & Tools",
+  "Baking & Confectionery",
+  "Photography",
+  "Event Planning",
+  "Cleaning Services",
+  "Laundry Services",
+  "Gardening & Landscaping"
+];
 
 export const categoryOptions = categories.map((cat) => ({
   value: cat,
