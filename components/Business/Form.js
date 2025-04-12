@@ -2,7 +2,6 @@
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import { categoryOptions, loadCityOptions, handleCityChange } from "./utility";
@@ -53,9 +52,8 @@ const customSelectStyles = {
   }),
 };
 
-export default function BusinessForm({ onSuccess }) {
+export default function RegisterForm({ onSuccess }) {
   const { data: session } = useSession();
-  const router = useRouter();
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -111,7 +109,7 @@ export default function BusinessForm({ onSuccess }) {
     <div
       className="h-fit bg-cover bg-center flex items-center justify-center"
       style={{
-        backgroundImage: "url('images/register-bg.jpg')",
+        backgroundImage: "url('/images/register-bg.jpg')",
       }}
     >
       <div className="w-full my-16 max-w-xl bg-white/35 backdrop-blur-2xl p-8 rounded-lg shadow-lg">
@@ -182,7 +180,7 @@ export default function BusinessForm({ onSuccess }) {
               loadOptions={loadCityOptions}
               isMulti
               defaultOptions={false}
-              onChange={handleCityChange}
+              onChange={handleCityChange(setSelectedCities)}
               value={selectedCities}
               styles={customSelectStyles}
               placeholder="Type city name to select city"

@@ -148,20 +148,20 @@ const UpdateForm = ({ business, setBusiness }) => {
         loadOptions={loadCityOptions}
         isMulti
         defaultOptions={false}
-        onChange={handleCityChange}
+        onChange={handleCityChange(setSelectedCities)}
         value={selectedCities}
       />
 
       <button
-        className={`px-4 py-2 rounded text-white cursor-pointer ${
+        className={`px-4 py-2 rounded-md font-bold ${
           isFormChanged()
-            ? "bg-pink-600 hover:bg-pink-700"
-            : "bg-gray-400 cursor-not-allowed"
+            ? "bg-yellow-300 hover:bg-yellow-500 hover:text-white cursor-pointer text-black transition"
+            : "bg-gray-400 cursor-not-allowed text-white"
         }`}
         onClick={handleUpdate}
         disabled={!isFormChanged()}
       >
-        Update Info
+        Save
       </button>
     </div>
   );

@@ -13,34 +13,6 @@ function Header() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   console.log("session:", session);
-  //   if (session?.user) {
-  //     router.push("/business");
-  //   }
-  // }, [router, session]);
-
-  // useEffect(() => {
-  //   const checkBusinessExists = async () => {
-  //     if (!session?.user?.email) return;
-
-  //     try {
-  //       const res = await fetch(`/api/business/check?email=${session.user.email}`);
-  //       const data = await res.json();
-
-  //       if (data.exists) {
-  //         router.push("/business/dashboard");
-  //       } else {
-  //         router.push("/business/register");
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to check business existence:", err);
-  //     }
-  //   };
-
-  //   checkBusinessExists();
-  // }, [router, session]);
-
   useEffect(() => {
     if (profileClick === true) {
       const timeout = setTimeout(() => {

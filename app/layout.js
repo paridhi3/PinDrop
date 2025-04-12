@@ -33,6 +33,8 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/images/logo.png" type="image/png" />
         <title>PinDrop</title>
+
+        <link rel="preload" as="image" href="/images/register-bg.jpg" />
       </head>
       <body
         className={`${poppins.variable} antialiased flex flex-col min-h-screen`}

@@ -29,6 +29,10 @@ export const loadCityOptions = (inputValue, callback) => {
   callback(filtered);
 };
 
-export const handleCityChange = (cities) => {
+// export const handleCityChange = (cities) => {
+//   setSelectedCities(cities || []);
+// };
+export const handleCityChange = (setSelectedCities) => (cities) => {
   setSelectedCities(cities || []);
 };
+

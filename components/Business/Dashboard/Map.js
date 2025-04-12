@@ -99,7 +99,7 @@ const Map = ({ business }) => {
 
       <button
         onClick={resetView}
-        className="mt-4 px-4 py-2 bg-pink-600 cursor-pointer text-white rounded hover:bg-pink-700"
+        className="mt-4 bg-yellow-300 hover:bg-yellow-500 hover:text-white text-black px-4 py-2 rounded-md font-bold cursor-pointer transition"
       >
         Reset View
       </button>
