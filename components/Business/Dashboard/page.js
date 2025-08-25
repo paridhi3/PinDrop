@@ -1,3 +1,4 @@
+// components/Business/Dashboard/page.js
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Loader from "@/components/Loader";

@@ -1,10 +1,10 @@
-//components/Business/Form.js
+//components/Business/RegisterForm.js
 "use client";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
-import { categoryOptions, loadCityOptions, handleCityChange } from "./utility";
+import { categoryOptions, loadCityOptions, handleCityChange } from "../utility";
 
 const customSelectStyles = {
   control: (provided, state) => ({

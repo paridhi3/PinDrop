@@ -1,4 +1,4 @@
-// components/Business/Dashboard/UpdateForm.js
+// components/Business/Dashboard/UserForm.js
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
@@ -6,7 +6,7 @@ import Select from "react-select";
 import AsyncSelect from "react-select/async";
 import { categoryOptions, loadCityOptions, handleCityChange } from "../../utility";
 
-const UpdateForm = ({ business, setBusiness }) => {
+const UserForm = ({ business, setBusiness }) => {
   const { data: session } = useSession();
   const [initialForm, setInitialForm] = useState(null);
   const [selectedCities, setSelectedCities] = useState([]);
@@ -118,16 +118,6 @@ const UpdateForm = ({ business, setBusiness }) => {
   return (
     // update form
     <div className="space-y-4 mb-8">
-      <label className="block text-base font-semibold text-gray-700 mb-1">
-        Business Name
-      </label>
-      <input
-        type="text"
-        className="w-full px-4 py-2 border rounded"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
-        placeholder="Business Name"
-      />
 
       <label className="block text-base font-semibold text-gray-700 mb-1">
         Category
@@ -143,22 +133,12 @@ const UpdateForm = ({ business, setBusiness }) => {
       />
 
       <label className="block text-base font-semibold text-gray-700 mb-1">
-        Description
-      </label>
-      <textarea
-        className="w-full px-4 py-2 border rounded"
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
-        placeholder="Description"
-      />
-
-      <label className="block text-base font-semibold text-gray-700 mb-1">
-        Delivery Cities
+        Delivery City
       </label>
       <AsyncSelect
         cacheOptions
         loadOptions={loadCityOptions}
-        isMulti
+        // isMulti
         defaultOptions={false}
         onChange={handleCityChange(setSelectedCities)}
         value={selectedCities}
@@ -179,4 +159,4 @@ const UpdateForm = ({ business, setBusiness }) => {
   );
 };
 
-export default UpdateForm;
+export default UserForm;

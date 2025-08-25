@@ -1,4 +1,3 @@
-// components/Business/Dashboard/Map.js
 "use client";
 import { useState, useRef, useEffect } from "react";
 import React from "react";

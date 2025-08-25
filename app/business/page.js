@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-import RegisterForm from "@/components/Business/Form";
-import BusinessDashboard from "@/components/Business/Dashboard/Dashboard";
+import RegisterForm from "@/components/Business/RegisterForm";
+import BusinessDashboard from "@/components/Business/Dashboard/page";
 import { useLoader } from "@/context/LoaderContext";
 import Loader from "@/components/Loader";
 
@@ -52,11 +52,7 @@ export default function Business() {
   //   return <Loader />;
   // }
 
-  if (
-    status === "loading" ||
-    loadingBusiness || // <- NEW condition
-    (status === "authenticated" && !session?.user)
-  ) {
+  if (status === "loading" || loadingBusiness || (status === "authenticated" && !session?.user)) {
     return <Loader />;
   }
 

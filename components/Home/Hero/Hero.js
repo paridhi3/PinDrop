@@ -1,11 +1,20 @@
 "use client";
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import StaticMap from "./StaticMap";
+// import AsyncSelect from "react-select/async";
+import {
+  categoryOptions,
+  loadCityOptions,
+  handleCityChange,
+} from "../../utility";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
+const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 
 export default function Hero() {
+  const [selectedCities, setSelectedCities] = useState([]);
+
   return (
     <section className="relative w-full h-[calc(100vh-5rem)] overflow-hidden">
       {/* Map as background */}
@@ -14,12 +23,12 @@ export default function Hero() {
         <StaticMap />
       </div>
 
-      {/* Overlay for darkening map*/}
+      {/* Overlay for darkening map */}
       <div className="absolute inset-0 bg-black/20 z-10" />
 
       {/* Foreground content */}
       <div className="relative z-20 flex items-center justify-center h-full px-6 md:px-12 lg:px-24">
-        <div className="max-w-xl text-center bg-white/40 backdrop-blur-md p-8 rounded-xl shadow-lg">
+        <div className="max-w-xl text-center bg-white/60 backdrop-blur-md p-8 rounded-xl shadow-lg">
           <h1 className="text-4xl sm:text-4xl font-extrabold text-gray-800 leading-tight mb-4 px-6 pt-4">
             Explore businesses that bring convenience home with{" "}
             <span className="text-yellow-400 text-outline">PinDrop</span>
@@ -30,10 +39,16 @@ export default function Hero() {
           </p>
 
           <form className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6">
-            <input
-              type="text"
+            <AsyncSelect
+              cacheOptions
+              loadOptions={loadCityOptions}
+              // isMulti
+              defaultOptions={false}
+              onChange={handleCityChange(setSelectedCities)}
+              value={selectedCities}
+              className="w-full sm:w-64 cursor-pointer"
               placeholder="Enter your city"
-              className="w-full sm:w-64 px-4 py-3 rounded-lg border-2 border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              priority
             />
             <button
               type="submit"

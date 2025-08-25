@@ -86,7 +86,7 @@ function Header() {
                   <button
                     onClick={() => {
                       setProfileClick(false); // close dropdown on click
-                      signOut({ callbackUrl: '/' });
+                      signOut({ callbackUrl: "/" });
                     }}
                     className="block w-full text-left px-4 py-2 text-sm cursor-pointer font-bold text-gray-700 hover:text-yellow-300"
                   >
@@ -188,7 +188,7 @@ function Header() {
           {session?.user ? (
             <div>
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={() => signOut({ callbackUrl: "/" })}
                 className="text-left font-medium cursor-pointer w-full text-red-500 hover:underline mt-2"
               >
                 Logout
@@ -217,15 +217,27 @@ function Header() {
               &times;
             </button>
             <h2 className="text-lg font-bold mb-4">Business Login</h2>
+
+            <div className="flex items-center justify-center">
             <button
+              className="px-4 py-2 border flex gap-2 border-slate-200 rounded-lg text-slate-700 hover:border-slate-400 hover:text-slate-900 hover:shadow transition duration-150 cursor-pointer"
               onClick={() => {
                 setShowLoginModal(false);
                 signIn("google", { callbackUrl: "/business" });
               }}
-              className="w-full py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-md cursor-pointer transition"
             >
-              Login with Google
+              <Image
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="google logo"
+                width={24}
+                height={24}
+                className="w-6 h-6"
+                loading="lazy"
+              />
+              <span>Login with Google</span>
             </button>
+            </div>
+
           </div>
         </div>
       )}
