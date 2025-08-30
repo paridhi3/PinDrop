@@ -4,7 +4,7 @@ import "./globals.css";
 import Provider from "./Provider";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { LoaderProvider } from "@/context/LoaderContext";
+import { LoaderProvider } from "../context/LoaderContext";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",

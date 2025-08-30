@@ -1,4 +1,5 @@
-import worldCities from "@/data/worldcities.json";
+// app/components/utility.js
+import worldCities from "../data/worldcities.json";
 
 export const categories = [
   "Electronics",
@@ -59,10 +60,11 @@ export const loadCityOptions = (inputValue, callback) => {
   callback(filtered);
 };
 
-// export const handleCityChange = (cities) => {
-//   setSelectedCities(cities || []);
-// };
 export const handleCityChange = (setSelectedCities) => (cities) => {
   setSelectedCities(cities || []);
+};
+
+export const handleCategoryChange = (setSelectedCategories) => (categories) => {
+  setSelectedCategories(categories || []);
 };
 

@@ -1,19 +1,27 @@
+// Hero.js
 "use client";
 import { useState } from "react";
-import dynamic from "next/dynamic";
 import StaticMap from "./StaticMap";
-// import AsyncSelect from "react-select/async";
+import { useRouter } from "next/navigation";
+import AsyncSelect from "react-select/async";
+import { useId } from "react";
 import {
   categoryOptions,
   loadCityOptions,
   handleCityChange,
 } from "../../utility";
 
-const Map = dynamic(() => import("./Map"), { ssr: false });
-const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
-
 export default function Hero() {
-  const [selectedCities, setSelectedCities] = useState([]);
+  const selectId = useId();
+  const [selectedCity, setSelectedCity] = useState([]);
+  const router = useRouter();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedCity) return;
+
+    router.push(`/UserDashboard?city=${selectedCity.value}`);
+  };
 
   return (
     <section className="relative w-full h-[calc(100vh-5rem)] overflow-hidden">
@@ -40,12 +48,13 @@ export default function Hero() {
 
           <form className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6">
             <AsyncSelect
+              instanceId={selectId}
               cacheOptions
               loadOptions={loadCityOptions}
               // isMulti
               defaultOptions={false}
-              onChange={handleCityChange(setSelectedCities)}
-              value={selectedCities}
+              onChange={setSelectedCity}
+              value={selectedCity}
               className="w-full sm:w-64 cursor-pointer"
               placeholder="Enter your city"
               priority
@@ -53,6 +62,7 @@ export default function Hero() {
             <button
               type="submit"
               className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 hover:text-white text-black font-bold py-3 px-6 rounded-lg cursor-pointer transition"
+              onClick={handleSubmit}
             >
               Check Availability
             </button>
