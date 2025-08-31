@@ -1,37 +1,3 @@
-// "use client";
-// import { useEffect, useRef } from "react";
-
-// export default function Map() {
-//   const mapRef = useRef(null);
-
-//   useEffect(() => {
-//     const script = document.createElement("script");
-//     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
-//     script.async = true;
-//     script.defer = true;
-//     document.head.appendChild(script);
-
-//     window.initMap = function () {
-//       new window.google.maps.Map(mapRef.current, {
-//         center: { lat: 28.6139, lng: 77.2090 }, // Delhi by default
-//         zoom: 12,
-//       });
-//     };
-
-//     return () => {
-//       delete window.initMap;
-//     };
-//   }, []);
-
-//   return (
-//     <div
-//       ref={mapRef}
-//       className="w-full h-[400px] rounded-xl shadow-md"
-//     />
-//   );
-// }
-
-
 "use client";
 import { useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";

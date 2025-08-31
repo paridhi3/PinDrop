@@ -1,7 +1,7 @@
 // components/Business/Dashboard/page.js
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Loader from "@/components/Loader";
+import Loader from "../../Loader";
 import DeleteAccount from "./DeleteAccount";
 import Map from "./Map";
 import UpdateForm from "./UpdateForm";
