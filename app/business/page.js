@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-import RegisterForm from "@/components/Business/RegisterForm";
-import BusinessDashboard from "@/components/Business/Dashboard/page";
-import { useLoader } from "@/context/LoaderContext";
-import Loader from "@/components/Loader";
+import RegisterForm from "../../components/Business/RegisterForm";
+import BusinessDashboard from "../../components/Business/Dashboard/page";
+import { useLoader } from "../../context/LoaderContext";
+import Loader from "../../components/Loader";
 
 export default function Business() {
   const { data: session, status } = useSession();
