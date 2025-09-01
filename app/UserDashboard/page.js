@@ -23,12 +23,17 @@ function DashboardContent() {
     try {
       const params = new URLSearchParams();
 
+      // if (filters.city?.length > 0) {
+      //   filters.city.forEach(
+      //     (c) => c.trim() && params.append("city", c.trim())
+      //   );
+      // } else if (cityQuery?.trim()) {
+      //   params.append("city", cityQuery.trim());
+      // }
       if (filters.city?.length > 0) {
         filters.city.forEach(
           (c) => c.trim() && params.append("city", c.trim())
         );
-      } else if (cityQuery?.trim()) {
-        params.append("city", cityQuery.trim());
       }
 
       if (filters.category?.length > 0) {
@@ -53,7 +58,7 @@ function DashboardContent() {
     } finally {
       setLoading(false);
     }
-  }, [cityQuery, filters]);
+  }, [filters]);
 
   useEffect(() => {
     if (cityFromUrl) setCityQuery(cityFromUrl);
@@ -114,7 +119,9 @@ function DashboardContent() {
           {!loading &&
             results.length === 0 &&
             // (cityQuery || filters.city.length > 0 || filters.category) && (
-            (cityQuery || filters.city.length > 0 || filters.category.length > 0) && (
+            (cityQuery ||
+              filters.city.length > 0 ||
+              filters.category.length > 0) && (
               <p className="text-center text-gray-500 mt-10">
                 No businesses found.
               </p>
