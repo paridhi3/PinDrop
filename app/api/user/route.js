@@ -56,18 +56,65 @@
 //     );
 //   }
 // }
+// app/api/user/route.js
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
-export async function GET() {
+export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+
+    // Collect filters
+    const cities = searchParams
+      .getAll("city")
+      .filter((c) => c && c.trim() !== "");
+    const categories = searchParams
+      .getAll("category")
+      .filter((cat) => cat && cat.trim() !== "");
+
+    // Build Prisma where clause
+    const where = { AND: [] };
+
+    if (cities.length > 0) {
+      where.AND.push({
+        deliveryZones: {
+          some: {
+            OR: cities.map((c) => ({
+              cityName: {
+                equals: c.trim(),
+                mode: "insensitive",
+              },
+            })),
+          },
+        },
+      });
+    }
+
+    if (categories.length > 0) {
+      where.AND.push({
+        OR: categories.map((cat) => ({
+          category: {
+            equals: cat.trim(),
+            mode: "insensitive",
+          },
+        })),
+      });
+    }
+
+    // If no filters applied → undefined (return all businesses)
     const businesses = await prisma.business.findMany({
-      include: { deliveryZones: true },
+      where: where.AND.length > 0 ? where : undefined,
+      include: {
+        deliveryZones: true,
+      },
     });
-    console.log("Fetched businesses:", businesses);
+
     return NextResponse.json(businesses);
   } catch (error) {
     console.error("API error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
