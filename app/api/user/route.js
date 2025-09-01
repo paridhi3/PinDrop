@@ -81,7 +81,7 @@ export async function GET(req) {
           some: {
             OR: cities.map((c) => ({
               cityName: {
-                equals: c.trim(),
+                contains: c.trim(),
                 mode: "insensitive",
               },
             })),
