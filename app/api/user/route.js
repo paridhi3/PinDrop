@@ -109,6 +109,8 @@ export async function GET(req) {
       },
     });
 
+    console.log("Applied filters:", JSON.stringify(where, null, 2));
+
     return NextResponse.json(businesses);
   } catch (error) {
     console.error("API error:", error);
